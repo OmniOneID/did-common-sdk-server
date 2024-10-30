@@ -17,6 +17,7 @@ did-common-sdk-server
 ├── dependencies-license.md
 ├── MAINTAINERS.md
 ├── README.md
+├── README_ko.md
 ├── RELEASE-PROCESS.md
 ├── SECURITY.md
 ├── docs
@@ -57,10 +58,10 @@ Below is a description of each folder and file in the directory:
 | ┖ errorCode             | Error codes and troubleshooting guides          |
 | source                  | Server source code project                      |
 | ┖ did-common-sdk-server | Common SDK source code and build files          |
-| ┖ gradle                | Gradle build configurations and scripts         |
-| ┖ src                   | Main source code directory                      |
-| ┖ build.gradle          | Gradle build configuration file                 |
-| ┖ README.md             | Overview and instructions for the source code   |
+| &nbsp;&nbsp;&nbsp;┖ gradle                | Gradle build configurations and scripts         |
+| &nbsp;&nbsp;&nbsp;┖ src                   | Main source code directory                      |
+| &nbsp;&nbsp;&nbsp;┖ build.gradle          | Gradle build configuration file                 |
+| &nbsp;&nbsp;&nbsp;┖ README.md             | Overview and instructions for the source code   |
 
 <br/>
 
