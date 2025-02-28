@@ -7,7 +7,7 @@ package org.omnione.did.common.exception;
  *
  */
 
-public class OpenDidException extends RuntimeException{
+public class CommonSdkException extends RuntimeException{
     private ErrorCode errorCode;
     private ErrorResponse errorResponse;
 
@@ -16,7 +16,7 @@ public class OpenDidException extends RuntimeException{
      *
      * @param errorCode The ErrorCode enum value representing the specific error.
      */
-    public OpenDidException(ErrorCode errorCode) {
+    public CommonSdkException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
@@ -26,7 +26,7 @@ public class OpenDidException extends RuntimeException{
      *
      * @param errorResponse The ErrorResponse object representing the specific error.
      */
-    public OpenDidException(ErrorResponse errorResponse) {
+    public CommonSdkException(ErrorResponse errorResponse) {
         super(errorResponse.getDescription());
         this.errorResponse = errorResponse;
     }
