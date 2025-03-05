@@ -173,4 +173,10 @@ public class DateTimeUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'");
         return utcNow.format(formatter);
     }
+
+    public static String addSecondsToCurrentTimeString(int seconds) {
+        ZonedDateTime utcNow = ZonedDateTime.now(ZoneId.of("UTC")).plus(seconds, ChronoUnit.SECONDS);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'");
+        return utcNow.format(formatter);
+    }
 }
