@@ -1,6 +1,5 @@
 package org.omnione.did.common.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -8,11 +7,10 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import org.omnione.did.common.exception.ErrorCode;
-import org.omnione.did.common.exception.OpenDidException;
+import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.common.vo.QrImageData;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +29,7 @@ public class QrMaker {
      *
      * @param data The data to be encoded in the QR code.
      * @return The QR code image data.
-     * @throws OpenDidException If the QR code generation fails.
+     * @throws CommonSdkException If the QR code generation fails.
      */
     public static QrImageData makeQrImage(final Object data) {
         byte[] qrImage;
@@ -62,10 +60,10 @@ public class QrMaker {
                 MatrixToImageWriter.writeToStream(bitMatrix, format, pngOutputStream);
                 return pngOutputStream.toByteArray();
             } catch (IOException e) {
-                throw new OpenDidException(ErrorCode.QR_CODE_IO_ERROR);
+                throw new CommonSdkException(ErrorCode.QR_CODE_IO_ERROR);
             }
         } catch (WriterException e) {
-            throw new OpenDidException(ErrorCode.QR_CODE_ENCODING_ERROR);
+            throw new CommonSdkException(ErrorCode.QR_CODE_ENCODING_ERROR);
         }
     }
 
@@ -76,7 +74,7 @@ public class QrMaker {
      * @param width The desired width of the QR code
      * @param height The desired height of the QR code
      * @return BitMatrix representation of the QR code
-     * @throws OpenDidException If there's an error during QR code generation
+     * @throws CommonSdkException If there's an error during QR code generation
      */
     public static BitMatrix makeQrBitMatrix(String contents, int width, int height) throws WriterException {
         Map<EncodeHintType, Object> hints = new HashMap<>();

@@ -1,7 +1,7 @@
 package org.omnione.did.common.util;
 
 import org.omnione.did.common.exception.ErrorCode;
-import org.omnione.did.common.exception.OpenDidException;
+import org.omnione.did.common.exception.CommonSdkException;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -152,7 +152,7 @@ public class DateTimeUtil {
             return secondDateTime.isAfter(firstDateTime);
         } catch (DateTimeParseException e) {
             System.out.println("Error: One of the date-time strings is not valid: " + e.getMessage());
-            throw new OpenDidException(ErrorCode.INVALID_DATE_TIME);
+            throw new CommonSdkException(ErrorCode.INVALID_DATE_TIME);
         }
     }
 
@@ -166,5 +166,17 @@ public class DateTimeUtil {
      */
     public static Instant getMaxUTCTime() {
         return LocalDateTime.of(9999, 12, 31, 23, 59, 59).toInstant(ZoneOffset.UTC);
+    }
+
+    public static String addMinutesToCurrentTimeString(int minutes) {
+        ZonedDateTime utcNow = ZonedDateTime.now(ZoneId.of("UTC")).plus(minutes, ChronoUnit.MINUTES);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'");
+        return utcNow.format(formatter);
+    }
+
+    public static String addSecondsToCurrentTimeString(int seconds) {
+        ZonedDateTime utcNow = ZonedDateTime.now(ZoneId.of("UTC")).plus(seconds, ChronoUnit.SECONDS);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'");
+        return utcNow.format(formatter);
     }
 }

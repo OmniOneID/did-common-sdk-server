@@ -3,7 +3,7 @@ package org.omnione.did.common.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.omnione.did.common.exception.ErrorCode;
 import org.omnione.did.common.exception.HttpClientException;
-import org.omnione.did.common.exception.OpenDidException;
+import org.omnione.did.common.exception.CommonSdkException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -22,9 +22,9 @@ public class HttpClientUtil {
      * Send an HTTP GET request to the given URL and returns the response body as a String.
      * @param url URL to send the request to
      * @return Response body as a String
-     * @throws OpenDidException if the HTTP request fails
+     * @throws CommonSdkException if the HTTP request fails
      */
-    public static String getData(String url) {
+    public static String getData(String url) throws HttpClientException {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
@@ -34,13 +34,14 @@ public class HttpClientUtil {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             int statusCode = response.statusCode();
             if (statusCode < 200 || statusCode >= 300) {
-                throw new OpenDidException(ErrorCode.HTTP_CLIENT_ERROR);
+                throw new HttpClientException(statusCode, response.body());
             }
             return response.body();
         } catch (IOException | InterruptedException e) {
-            throw new OpenDidException(ErrorCode.HTTP_CLIENT_ERROR);
+            throw new CommonSdkException(ErrorCode.HTTP_CLIENT_ERROR);
+        } catch (HttpClientException e) {
+            throw e;
         }
-
     }
 
     /**
@@ -48,9 +49,9 @@ public class HttpClientUtil {
      * @param url URL to send the request to
      * @param responseType Class type to parse the response body to
      * @return Response body parsed as the specified class type
-     * @throws OpenDidException if the HTTP request fails
+     * @throws CommonSdkException if the HTTP request fails
      */
-    public static <T> T getData(String url, Class<T> responseType){
+    public static <T> T getData(String url, Class<T> responseType) throws HttpClientException {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
@@ -62,12 +63,13 @@ public class HttpClientUtil {
             if (statusCode >= 200 && statusCode < 300) {
                 return objectMapper.readValue(response.body(), responseType);
             } else {
-                throw new OpenDidException(ErrorCode.HTTP_CLIENT_ERROR);
+                throw new HttpClientException(statusCode, response.body());
             }
         } catch (IOException | InterruptedException e) {
-            throw new OpenDidException(ErrorCode.HTTP_CLIENT_ERROR);
+            throw new CommonSdkException(ErrorCode.HTTP_CLIENT_ERROR);
+        } catch (HttpClientException e) {
+            throw e;
         }
-
     }
 
     /**
@@ -75,7 +77,7 @@ public class HttpClientUtil {
      * @param url URL to send the request to
      * @param requestBody Request body to send
      * @return Response body as a String
-     * @throws OpenDidException if the HTTP request fails
+     * @throws CommonSdkException if the HTTP request fails
      */
     public static String postData(String url, String requestBody) throws IOException, InterruptedException, HttpClientException {
         try {
@@ -87,11 +89,13 @@ public class HttpClientUtil {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             int statusCode = response.statusCode();
             if (statusCode < 200 || statusCode >= 300) {
-                throw new OpenDidException(ErrorCode.HTTP_CLIENT_ERROR);
+                throw new HttpClientException(statusCode, response.body());
             }
             return response.body();
         } catch (IOException | InterruptedException e) {
-            throw new OpenDidException(ErrorCode.HTTP_CLIENT_ERROR);
+            throw new CommonSdkException(ErrorCode.HTTP_CLIENT_ERROR);
+        } catch (HttpClientException e) {
+            throw e;
         }
     }
 
@@ -102,9 +106,9 @@ public class HttpClientUtil {
      * @param requestBody Request body to send
      * @param responseType Class type to parse the response body to
      * @return Response body parsed as the specified class type
-     * @throws OpenDidException if the HTTP request fails
+     * @throws CommonSdkException if the HTTP request fails
      */
-    public static <T> T postData(String url, String requestBody, Class<T> responseType) {
+    public static <T> T postData(String url, String requestBody, Class<T> responseType) throws HttpClientException {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
@@ -118,11 +122,12 @@ public class HttpClientUtil {
             if (statusCode >= 200 && statusCode < 300) {
                 return objectMapper.readValue(response.body(), responseType);
             } else {
-                throw new OpenDidException(ErrorCode.HTTP_CLIENT_ERROR);
+                throw new HttpClientException(statusCode, response.body());
             }
         } catch (IOException | InterruptedException e) {
-            throw new OpenDidException(ErrorCode.HTTP_CLIENT_ERROR);
+            throw new CommonSdkException(ErrorCode.HTTP_CLIENT_ERROR);
+        } catch (HttpClientException e) {
+            throw e;
         }
-
     }
 }

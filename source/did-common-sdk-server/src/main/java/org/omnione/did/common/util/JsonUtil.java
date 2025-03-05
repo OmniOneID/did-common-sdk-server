@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.omnione.did.common.exception.ErrorCode;
-import org.omnione.did.common.exception.OpenDidException;
+import org.omnione.did.common.exception.CommonSdkException;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -34,7 +34,7 @@ public class JsonUtil {
      * It returns the sorted JSON string.
      * @param obj  the object to serialize
      * @return the sorted JSON string
-     * @throws OpenDidException if an error occurs during serialization and sort
+     * @throws CommonSdkException if an error occurs during serialization and sort
      */
     public static String serializeAndSort(Object obj)  {
         try {
@@ -44,7 +44,7 @@ public class JsonUtil {
             String sortedJsonString = mapper.writeValueAsString(sortedNode);
             return removeEscapeCharactersExceptValues(sortedJsonString);
         } catch (JsonProcessingException e) {
-            throw new OpenDidException(ErrorCode.JSON_SERIALIZE_SORT_FAILED);
+            throw new CommonSdkException(ErrorCode.JSON_SERIALIZE_SORT_FAILED);
         }
 
     }
@@ -111,13 +111,13 @@ public class JsonUtil {
      * This method converts any object to a JSON string and returns the JSON string.
      * @param obj  the object to convert
      * @return the JSON string
-     * @throws OpenDidException if an error occurs during serialization
+     * @throws CommonSdkException if an error occurs during serialization
      */
     public static String serializeToJson(Object obj)  {
         try {
             return mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            throw new OpenDidException(ErrorCode.JSON_SERIALIZE_FAILED);
+            throw new CommonSdkException(ErrorCode.JSON_SERIALIZE_FAILED);
         }
     }
 
@@ -128,13 +128,13 @@ public class JsonUtil {
      * @param clazz  the class type of the
      * @param <T>  the class type of the object to deserialize
      * @return the deserialized object
-     * @throws OpenDidException if an error occurs during deserialization
+     * @throws CommonSdkException if an error occurs during deserialization
      */
     public static <T> T deserializeFromJson(String jsonString, Class<T> clazz) {
         try {
             return mapper.readValue(jsonString, clazz);
         } catch (JsonProcessingException e) {
-            throw new OpenDidException(ErrorCode.JSON_DESERIALIZE_FAILED);
+            throw new CommonSdkException(ErrorCode.JSON_DESERIALIZE_FAILED);
         }
     }
 
