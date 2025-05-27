@@ -5,8 +5,8 @@ plugins {
 }
 
 group = 'org.omnione.did'
-version = '1.0.1'
-sourceCompatibility = '17'
+version = '2.0.0'
+sourceCompatibility = '21'
 
 configurations {
   compileOnly {

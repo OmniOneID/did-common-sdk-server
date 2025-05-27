@@ -2,6 +2,7 @@ package org.omnione.did.common.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -123,7 +124,12 @@ public class JsonUtil {
 
     /**
      * Deserialize a JSON string into an object of the specified class type.
-     * This method deserializes a JSON string into an object of the specified class type.
+     * <p>
+     * This method is useful for converting a JSON string into a simple Java object (POJO).
+     * However, it does not support complex generic types such as `List<T>` or `Map<K, V>`,
+     * as Java erases generic type information at runtime.
+     * </p>
+     *
      * @param jsonString  the JSON string to deserialize
      * @param clazz  the class type of the
      * @param <T>  the class type of the object to deserialize
@@ -138,17 +144,32 @@ public class JsonUtil {
         }
     }
 
-    private static class MyObject {
-        public String name;
-        public int age;
-        public String city;
-        public String[] friends;
-
-        MyObject(String name, int age, String city, String[] friends) {
-            this.name = name;
-            this.age = age;
-            this.city = city;
-            this.friends = friends;
+    /**
+     * Deserialize a JSON string into an object of a complex or generic type.
+     * <p>
+     * This method supports deserialization into generic types such as `List<T>` and `Map<K, V>`.
+     * It maintains type information by using `TypeReference<T>`, preventing type erasure issues.
+     * </p>
+     *
+     * <pre>
+     * Example usage:
+     * {@code
+     * List<String> list = JsonUtil.deserializeFromJson(jsonString, new TypeReference<List<String>>() {});
+     * Map<String, Integer> map = JsonUtil.deserializeFromJson(jsonString, new TypeReference<Map<String, Integer>>() {});
+     * }
+     * </pre>
+     *
+     * @param jsonString the JSON string to deserialize
+     * @param typeReference the TypeReference indicating the target type
+     * @param <T> the type of the object to deserialize
+     * @return the deserialized object of type T
+     * @throws CommonSdkException if an error occurs during deserialization
+     */
+    public static <T> T deserializeFromJson(String jsonString, TypeReference<T> typeReference) {
+        try {
+            return mapper.readValue(jsonString, typeReference);
+        } catch (JsonProcessingException var3) {
+            throw new CommonSdkException(ErrorCode.JSON_DESERIALIZE_FAILED);
         }
     }
 }
