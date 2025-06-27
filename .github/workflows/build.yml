@@ -35,7 +35,7 @@ jobs:
 
       - name: Build JAR
         run: |
-          ./gradlew bootjar
+          ./gradlew build
           echo "JAR file generated at:"
           find ./build/libs -name "*.jar"     
 
@@ -63,7 +63,7 @@ jobs:
       - name: Calculate SHA-256
         id: calculate_sha
         run: |
-          sha256=$(sha256sum ${{ env.jar_path }} | awk '{ print $1 }')
+          sha256=$(sha256sum ${{ steps.find_jar.outputs.jar_path }} | awk '{ print $1 }')
           echo "SHA-256: $sha256"
           echo "::set-output name=jar_sha256::$sha256"
   
