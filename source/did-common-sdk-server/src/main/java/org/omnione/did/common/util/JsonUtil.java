@@ -2,13 +2,14 @@ package org.omnione.did.common.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.omnione.did.common.exception.ErrorCode;
-import org.omnione.did.common.exception.OpenDidException;
+import org.omnione.did.common.exception.CommonSdkException;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class JsonUtil {
      * It returns the sorted JSON string.
      * @param obj  the object to serialize
      * @return the sorted JSON string
-     * @throws OpenDidException if an error occurs during serialization and sort
+     * @throws CommonSdkException if an error occurs during serialization and sort
      */
     public static String serializeAndSort(Object obj)  {
         try {
@@ -44,7 +45,7 @@ public class JsonUtil {
             String sortedJsonString = mapper.writeValueAsString(sortedNode);
             return removeEscapeCharactersExceptValues(sortedJsonString);
         } catch (JsonProcessingException e) {
-            throw new OpenDidException(ErrorCode.JSON_SERIALIZE_SORT_FAILED);
+            throw new CommonSdkException(ErrorCode.JSON_SERIALIZE_SORT_FAILED);
         }
 
     }
@@ -111,44 +112,64 @@ public class JsonUtil {
      * This method converts any object to a JSON string and returns the JSON string.
      * @param obj  the object to convert
      * @return the JSON string
-     * @throws OpenDidException if an error occurs during serialization
+     * @throws CommonSdkException if an error occurs during serialization
      */
     public static String serializeToJson(Object obj)  {
         try {
             return mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            throw new OpenDidException(ErrorCode.JSON_SERIALIZE_FAILED);
+            throw new CommonSdkException(ErrorCode.JSON_SERIALIZE_FAILED);
         }
     }
 
     /**
      * Deserialize a JSON string into an object of the specified class type.
-     * This method deserializes a JSON string into an object of the specified class type.
+     * <p>
+     * This method is useful for converting a JSON string into a simple Java object (POJO).
+     * However, it does not support complex generic types such as `List<T>` or `Map<K, V>`,
+     * as Java erases generic type information at runtime.
+     * </p>
+     *
      * @param jsonString  the JSON string to deserialize
      * @param clazz  the class type of the
      * @param <T>  the class type of the object to deserialize
      * @return the deserialized object
-     * @throws OpenDidException if an error occurs during deserialization
+     * @throws CommonSdkException if an error occurs during deserialization
      */
     public static <T> T deserializeFromJson(String jsonString, Class<T> clazz) {
         try {
             return mapper.readValue(jsonString, clazz);
         } catch (JsonProcessingException e) {
-            throw new OpenDidException(ErrorCode.JSON_DESERIALIZE_FAILED);
+            throw new CommonSdkException(ErrorCode.JSON_DESERIALIZE_FAILED);
         }
     }
 
-    private static class MyObject {
-        public String name;
-        public int age;
-        public String city;
-        public String[] friends;
-
-        MyObject(String name, int age, String city, String[] friends) {
-            this.name = name;
-            this.age = age;
-            this.city = city;
-            this.friends = friends;
+    /**
+     * Deserialize a JSON string into an object of a complex or generic type.
+     * <p>
+     * This method supports deserialization into generic types such as `List<T>` and `Map<K, V>`.
+     * It maintains type information by using `TypeReference<T>`, preventing type erasure issues.
+     * </p>
+     *
+     * <pre>
+     * Example usage:
+     * {@code
+     * List<String> list = JsonUtil.deserializeFromJson(jsonString, new TypeReference<List<String>>() {});
+     * Map<String, Integer> map = JsonUtil.deserializeFromJson(jsonString, new TypeReference<Map<String, Integer>>() {});
+     * }
+     * </pre>
+     *
+     * @param jsonString the JSON string to deserialize
+     * @param typeReference the TypeReference indicating the target type
+     * @param <T> the type of the object to deserialize
+     * @return the deserialized object of type T
+     * @throws CommonSdkException if an error occurs during deserialization
+     */
+    public static <T> T deserializeFromJson(String jsonString, TypeReference<T> typeReference) {
+        try {
+            return mapper.readValue(jsonString, typeReference);
+        } catch (JsonProcessingException var3) {
+            throw new CommonSdkException(ErrorCode.JSON_DESERIALIZE_FAILED);
         }
     }
 }
