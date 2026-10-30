@@ -1,11 +1,12 @@
 plugins {
   id 'java'
+  id 'maven-publish'
   id 'org.asciidoctor.convert' version '2.2.0'
   id 'com.github.jk1.dependency-license-report' version '2.0'
 }
 
 group = 'org.omnione.did'
-version = '2.0.0'
+version = '3.0.0'
 sourceCompatibility = '21'
 
 configurations {
@@ -22,6 +23,20 @@ dependencies {
   implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.1'
   implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.1'
 
+  // OmniOne SDKs
+  implementation fileTree(dir: "libs", include: ["*.jar"], exclude: ["did-sdk-common-*.jar"])
+
+  // Crypto
+  implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
+
+  // JSON
+  implementation 'com.google.code.gson:gson:2.10.1'
+
+  // Validation
+  implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+  implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+  implementation 'org.glassfish:jakarta.el:4.0.2'
+
   // QR Image
   implementation 'com.google.zxing:javase:3.5.1'
 
@@ -34,9 +49,11 @@ tasks.named('test') {
 }
 
 jar {
-  archiveBaseName.set('did-sdk-common')
+  archiveBaseName.set('did-common-sdk-server')
   archiveVersion.set(version)
   archiveClassifier.set('')
+  preserveFileTimestamps = false
+  reproducibleFileOrder = true
 }
 
 import com.github.jk1.license.render.*
@@ -47,4 +64,16 @@ licenseReport {
   outputDir = "$projectDir/build/licenses"
   renderers = [new InventoryMarkdownReportRenderer()]
   filters = [new LicenseBundleNormalizer(), new ExcludeTransitiveDependenciesFilter()]
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+
+      groupId = 'org.omnione.did'
+      artifactId = 'did-common-sdk-server'
+      version = '3.0.0'
+    }
+  }
 }

@@ -33,6 +33,31 @@ public class DidUtil {
     }
 
     /**
+     * Extract the version from a DID URL query parameter (e.g. "?version=2").
+     *
+     * @param url The full DID URL string which may contain a version query parameter.
+     * @return The version as a Short, or null if the version parameter is not present.
+     */
+    public static Short extractVersion(String url) {
+        String versionParam = "version=";
+        int versionStart = url.indexOf(versionParam);
+
+        if (versionStart == -1) {
+            return null;
+        }
+
+        int versionEnd = url.indexOf('&', versionStart);
+        if (versionEnd == -1) {
+            versionEnd = url.indexOf('#', versionStart);
+            if (versionEnd == -1) {
+                versionEnd = url.length();
+            }
+        }
+
+        return Short.parseShort(url.substring(versionStart + versionParam.length(), versionEnd));
+    }
+
+    /**
      * Extract the key ID from a given DID Key URL, removing any query or fragment components.
      *
      * @param didKeyUrl The full DID Key URL string which may contain query parameters or fragments.

@@ -22,20 +22,16 @@ did-common-sdk-server
 ├── SECURITY.md
 ├── docs
 │   └── api
-│       └── Server Common SDK_DateTimeUtil.md
-│       └── Server Common SDK_DidUtil.md
-│       └── Server Common SDK_DidValidator.md
-│       └── Server Common SDK_HexUtil.md
-│       └── Server Common SDK_HttpClientUtil.md
-│       └── Server Common SDK_JsonUtil.md
-│       └── Server Common SDK_QrMaker.md
+│       └── COMMON_SDK-SERVER_API_ko.md
+│       └── COMMON_SDK-SERVER_API.md
 │   └── errorCode
 │       └── Common_ErrorCode.md
 └── source
     └── did-common-sdk-server
         ├── gradle
-        └── src
-        └── build.gradle
+        ├── libs
+        ├── src
+        ├── build.gradle
         └── README.md
 ```
 
@@ -57,7 +53,7 @@ did-common-sdk-server
 | ┖ api                            | API 가이드 문서              |
 | ┖ errorCode                      | 오류 코드 및 문제 해결 가이드       |
 | source                           | 서버 소스 코드 프로젝트           |
-| ┖ did-wallet-server              | Wallet 서버 소스 코드 및 빌드 파일 |
+| ┖ did-common-sdk-server              | Common SDK 소스 코드 및 빌드 파일 |
 | &nbsp;&nbsp;&nbsp;┖ gradle       | Gradle 빌드 설정 및 스크립트     |
 | &nbsp;&nbsp;&nbsp;┖ src          | 주요 소스 코드 디렉터리           |
 | &nbsp;&nbsp;&nbsp;┖ build.gradle | Gradle 빌드 설정 파일         |
@@ -71,17 +67,12 @@ did-common-sdk-server
 
 1. **서드파티 라이브러리**: 이 라이브러리들은 [build.gradle](source/did-common-sdk-server/build.gradle) 파일을 통해 관리되는 오픈 소스 종속성입니다. 서드파티 라이브러리와 그 라이선스에 대한 자세한 목록은 [dependencies-license.md](dependencies-license.md) 파일을 참조하십시오.
 
+2. **OmniOne SDK**: `source/did-common-sdk-server/libs` 폴더에 포함된 라이브러리들로, OmniOne DID 프로젝트의 로컬 종속성입니다.
+
 ## API Reference
 
 
-| Class          | 주요 기능                                                               | API 문서 링크                                |
-| -------------- | ------------------------------------------------------------------ | ------------------------------------------- |
-| DateTimeUtil   | 현재 UTC 시간 가져오기, 시간 추가, 시간 문자열 파싱                   | [Server Common SDK - DateTimeUtil API](./docs/api/Server%20Common%20SDK_DateTimeUtil.md)   |
-| DidValidator   | DID 검증, DID 키 검증 URL                                           | [Server Common SDK - DidValidator API](./docs/api/Server%20Common%20SDK_DidValidator.md)   |
-| HexUtil        | 바이트 배열을 16진수 문자열로 변환                                   | [Server Common SDK - HexUtil API](./docs/api/Server%20Common%20SDK_HexUtil.md)        |
-| HttpClientUtil | HTTP GET 요청, HTTP POST 요청                                       | [Server Common SDK - HttpClientUtil API](./docs/api/Server%20Common%20SDK_HttpClientUtil.md) |
-| JsonUtil       | 객체를 JSON 문자열로 직렬화, JSON 문자열을 객체로 역직렬화          | [Server Common SDK - JsonUtil API](./docs/api/Server%20Common%20SDK_JsonUtil.md)       |
-| QrMaker        | 데이터를 QR 코드 이미지로 변환하여 바이트 배열로 반환                 | [Server Common SDK - QrMaker API](./docs/api/Server%20Common%20SDK_QrMaker.md)        |
+API에 대한 자세한 내용은 [Server Common SDK API](./docs/api/COMMON_SDK-SERVER_API_ko.md) 문서를 참조하십시오.
 
 ## Change Log
 

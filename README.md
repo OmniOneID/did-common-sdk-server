@@ -22,20 +22,16 @@ did-common-sdk-server
 ├── SECURITY.md
 ├── docs
 │   └── api
-│       └── Server Common SDK_DateTimeUtil.md
-│       └── Server Common SDK_DidUtil.md
-│       └── Server Common SDK_DidValidator.md
-│       └── Server Common SDK_HexUtil.md
-│       └── Server Common SDK_HttpClientUtil.md
-│       └── Server Common SDK_JsonUtil.md
-│       └── Server Common SDK_QrMaker.md
+│       └── COMMON_SDK-SERVER_API_ko.md
+│       └── COMMON_SDK-SERVER_API.md
 │   └── errorCode
 │       └── Common_ErrorCode.md
 └── source
     └── did-common-sdk-server
         ├── gradle
-        └── src
-        └── build.gradle
+        ├── libs
+        ├── src
+        ├── build.gradle
         └── README.md
 ```
 
@@ -72,16 +68,11 @@ Libraries used in this project are organized into two main categories:
 
 1. **Third-Party Libraries**: These libraries are open-source dependencies managed via the [build.gradle](source/did-common-sdk-server/build.gradle) file. For a detailed list of third-party libraries and their licenses, please refer to the [dependencies-license.md](dependencies-license.md) file.
 
+2. **OmniOne SDK**: Libraries included in the `source/did-common-sdk-server/libs` folder, serving as local dependencies for the OmniOne DID project.
+
 ## API Reference
 
-| Class          | Key Features                                                       | API Documentation Link                      |
-| -------------- | ------------------------------------------------------------------ | ------------------------------------------- |
-| DateTimeUtil   | Gets current UTC time, add time, parse time strings                | [Server Common SDK - DateTimeUtil API](./docs/api/Server%20Common%20SDK_DateTimeUtil.md)   |
-| DidValidator   | DID Verification , DID Key Verification URL                        | [Server Common SDK - DidValidator API](./docs/api/Server%20Common%20SDK_DidValidator.md)   |
-| HexUtil        | Convert byte array to hexadecimal string                           | [Server Common SDK - HexUtil API](./docs/api/Server%20Common%20SDK_HexUtil.md)        |
-| HttpClientUtil | HTTP GET Reguest, HTTP POST  Reguest                               | [Server Common SDK - HttpClientUtil API](./docs/api/Server%20Common%20SDK_HttpClientUtil.md) |
-| JsonUtil       | Serialize object to JSON string, deserialize JSON string to object | [Server Common SDK - JsonUtil API](./docs/api/Server%20Common%20SDK_JsonUtil.md)       |
-| QrMaker        | Convert data to QR code image and return as byte array             | [Server Common SDK - QrMaker API](./docs/api/Server%20Common%20SDK_QrMaker.md)        |
+For more details on the API, please refer to the [Server Common SDK API](./docs/api/COMMON_SDK-SERVER_API.md) documentation.
 
 ## Change Log
 

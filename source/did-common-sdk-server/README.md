@@ -7,7 +7,7 @@ This document serves as a guide for using the Server Common SDK. The Server Comm
 | Category      | Description                   |
 |---------------|-------------------------------|
 | OS            | Linux, macOS, Windows         |
-| Language      | Java 17                       |
+| Language      | Java 21                       |
 | Build System  | Gradle 8.2                    |
 
 <br>
@@ -15,74 +15,41 @@ This document serves as a guide for using the Server Common SDK. The Server Comm
 ## Build Instructions
 Generate a JAR file using the `build.gradle` file of this SDK project.
 
-1. Open the project's `build.gradle` file and add the following JAR task configuration:
-```groovy
-jar {
-  archiveBaseName.set('did-sdk-common')
-  archiveVersion.set(version)
-  archiveClassifier.set('')
-}
-```
-2. Open the Gradle window and execute the `Tasks > other > jar` task in the project.
-3. Once the execution is complete, the file `did-sdk-common-1.0.0.jar` will be generated in the `build/libs` folder.
+1. Open the Gradle window and execute the `Tasks > build > jar` task in the project.
+2. Once the execution is complete, the file `did-common-sdk-server-3.0.0.jar` will be generated in the `build/libs` folder.
 
 <br>
 
 ## How to Apply SDK
-1. Copy the `did-sdk-common-1.0.0.jar` file to the `libs` folder of the app project.
+1. Copy the `did-common-sdk-server-3.0.0.jar` file to the `libs` folder of the app project.
 2. Add the following dependency to the `build.gradle` file of the app project.
 
 ```groovy
-    implementation files('libs/did-sdk-common-1.0.0.jar')
+    // Common SDK
+    implementation files('libs/did-common-sdk-server-3.0.0.jar')
+
+    // OmniOne SDKs (Local dependencies in libs folder)
+    implementation fileTree(dir: "libs", include: ["*.jar"], exclude: ["did-sdk-common-*.jar"])
+
+    // Crypto
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
+
+    // JSON
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.1'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.1'
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // Validation
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+    implementation 'org.glassfish:jakarta.el:4.0.2'
+
+    // QR Image
     implementation 'com.google.zxing:javase:3.5.1'
 ```
 3. Ensure that dependencies are properly added by synchronizing `Gradle`.
 
 <br>
 
-## API Specification and Key Features
-| Class          | Key Features                                                       | API Documentation Link                      |
-| -------------- | ------------------------------------------------------------------ | ------------------------------------------- |
-| DateTimeUtil   | Gets current UTC time, add time, parse time strings                | [Server Common SDK - DateTimeUtil API](../../docs/api/Server%20Common%20SDK_DateTimeUtil.md)   |
-| DidValidator   | DID Verification , DID Key Verification URL                        | [Server Common SDK - DidValidator API](../../docs/api/Server%20Common%20SDK_DidValidator.md)   |
-| HexUtil        | Convert byte array to hexadecimal string                           | [Server Common SDK - HexUtil API](../../docs/api/Server%20Common%20SDK_HexUtil.md)        |
-| HttpClientUtil | HTTP GET Reguest, HTTP POST  Reguest                               | [Server Common SDK - HttpClientUtil API](../../docs/api/Server%20Common%20SDK_HttpClientUtil.md) |
-| JsonUtil       | Serialize object to JSON string, deserialize JSON string to object | [Server Common SDK - JsonUtil API](../../docs/api/Server%20Common%20SDK_JsonUtil.md)       |
-| QrMaker        | Convert data to QR code image and return as byte array             | [Server Common SDK - QrMaker API](../../docs/api/Server%20Common%20SDK_QrMaker.md)        |
-
-### DateTimeUtil
-The DateTimeUtil class provides utility methods for date and time manipulation. Key features include:
-
-* <b>Get current UTC time</b>: Returns the current UTC time in ISO 8601 format.
-* <b>Add time</b>: Adds specified time to the current time.
-* <b>Parse time string</b>: Parses a string in ISO 8601 format into an Instant object.
-
-### DidValidator
-The DidValidator class provides utility methods for validating DID and DID Key URL formats. Key features include:
-
-* <b>Validate DID</b>: Validates the format of the given DID string.
-* <b>Validate DID Key URL</b>: Validates the format of the given DID Key URL string.
-
-### HexUtil
-The HexUtil class provides utility methods for converting byte arrays to hexadecimal strings. Key features include:
-
-* <b>Convert byte array to hexadecimal string</b>: Converts the given byte array to a hexadecimal string.
-
-### HttpClientUtil
-The HttpClientUtil class provides utility methods for sending HTTP GET and POST requests. Key features include:
-
-* <b>HTTP GET request</b>: Sends an HTTP GET request to the specified URL and returns the response body.
-* <b>HTTP POST request</b>: Sends an HTTP POST request to the specified URL and returns the response body.
-
-### JsonUtil
-The JsonUtil class provides utility methods for JSON serialization and deserialization. Key features include:
-
-* <b>Serialize object to JSON string</b>: Converts an object to a JSON string.
-* <b>Deserialize JSON string to object</b>: Converts a JSON string to an object of the specified class type.
-
-### QrMaker
-The QrMaker class provides utility methods for generating QR codes. Key features include:
-
-* <b>Generate QR code</b>: Converts the given data into a QR code image and returns it as a byte array.
+## API Specification
+For detailed API specifications and key features, please refer to the [Server Common SDK API](../../docs/api/COMMON_SDK-SERVER_API.md) documentation.
