@@ -18,12 +18,13 @@ puppeteer:
 Common Util SDK Error
 ==
 
-- Date: 2024-09-02
-- Version: v1.0.0
+- Date: 2026-11-03
+- Version: v3.0.0
 
 | Version | Date       | History                 |
 | ------- | ---------- | ------------------------|
 | v1.0.0  | 2024-09-02 | Initial                 |
+| v3.0.0  | 2026-11-03 | Added nonce and wallet error codes |
 
 <div style="page-break-after: always;"></div>
 
@@ -127,6 +128,7 @@ public class ErrorResponse {
 | SSDKUTL00421 | Invalid ECC curve type              | -           | Check if the ECC curve is one of the supported types (e.g., secp256r1). |
 | SSDKUTL00422 | Invalid symmetric cipher type       | -           | Use a valid symmetric cipher type (e.g., AES). |
 | SSDKUTL00423 | Invalid symmetric padding type      | -           | Use a valid padding type. |
+| SSDKUTL00424 | Failed to merge nonce | - | Check the nonces used for the session key. |
 
 ### 1-7. DID Document (00500 ~ 00599)
 
@@ -148,6 +150,9 @@ public class ErrorResponse {
 | SSDKUTL00603 | Failed to generate key         | -           | Check key generation parameters and provider status. |
 | SSDKUTL00604 | Failed to generate signature   | -           | Verify key validity and data to be signed. |
 | SSDKUTL00605 | Failed to load key element     | -           | Check if the key element exists in the wallet. |
+| SSDKUTL00606 | Wallet already exists | - | Use the existing wallet file or remove it before creating a new one. |
+| SSDKUTL00607 | Key already exists | - | Use the existing key or a different key ID. |
+| SSDKUTL00608 | Failed to get file wallet manager | - | Check the wallet file path and password. |
 
 ### 1-9. Token (00700 ~ 00799)
 

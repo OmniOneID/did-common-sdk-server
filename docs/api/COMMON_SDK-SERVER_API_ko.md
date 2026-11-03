@@ -19,12 +19,13 @@ puppeteer:
 
 - 주제: Server Common SDK API
 - 작성: OmniOne
-- 일자: 2024-09-02
-- 버전: v1.0.0
+- 일자: 2026-11-03
+- 버전: v3.0.0
 
 | 버전   | 일자       | 변경 내용                 |
 | ------ | ---------- | -------------------------|
 | v1.0.0 | 2024-09-02 | 초기 작성                 |
+| v3.0.0 | 2026-11-03 | ObjectUtil, OtpGenerator, LssClient, Base Service 구현체 추가 |
 
 
 <div style="page-break-after: always;"></div>
@@ -51,6 +52,9 @@ puppeteer:
     - [1.18 BaseCoreDidUtil](#118-basecoredidutil)
     - [1.19 BaseAccessTokenUtil](#119-baseaccesstokenutil)
     - [1.20 BaseWalletUtil](#120-basewalletutil)
+    - [1.21 ObjectUtil](#121-objectutil)
+    - [1.22 OtpGenerator](#122-otpgenerator)
+    - [1.23 LssClient](#123-lssclient)
 - [2. APIs - Domains](#2-apis---domains)
     - [2.1 DidDocCryptoHelper](#21-diddoccryptohelper)
     - [2.2 EcdhCryptoHelper](#22-ecdhcryptohelper)
@@ -61,6 +65,7 @@ puppeteer:
     - [3.3 TokenService](#33-tokenservice)
     - [3.4 VcService](#34-vcservice)
     - [3.5 WalletService](#35-walletservice)
+    - [3.6 Base Service Implementations](#36-base-service-implementations)
 - [4. Data Models](#4-data-models)
 - [5. Enumerator](#5-enumerator)
 - [6. APIs - Exceptions](#6-apis---exceptions)
@@ -2346,6 +2351,59 @@ byte[] sig = BaseWalletUtil.sign(wallet, "key-1", dataBytes);
 ```
 <br>
 
+## 1.21 ObjectUtil
+
+### Class Name
+`ObjectUtil`
+
+| 메서드 | 설명 |
+| ------ | ---- |
+| `static boolean equals(Object a, Object b)` | null을 고려한 동등 비교 |
+| `static boolean equalsIgnoreCase(String a, String b)` | null을 고려한 대소문자 무시 비교 |
+| `static int compareVersion(String v1, String v2)` | 점으로 구분한 버전 문자열 비교. 음수, 0, 양수를 돌려줌 |
+| `static boolean containsInJsonArray(String jsonArrayString, String targetValue)` | JSON 배열 문자열에 값이 있는지 확인 |
+
+## 1.22 OtpGenerator
+
+### Class Name
+`OtpGenerator`
+
+| 메서드 | 설명 |
+| ------ | ---- |
+| `static String generateOtp()` | 기본 길이의 숫자 OTP 생성 |
+| `static String generateOtp(int length)` | 지정한 길이의 숫자 OTP 생성 |
+| `static boolean isValidOtpFormat(String otp)` | 숫자이고 기본 길이인지 확인 |
+| `static boolean isValidOtpFormat(String otp, int length)` | 숫자이고 지정한 길이인지 확인 |
+
+## 1.23 LssClient
+
+### Class Name
+`LssClient` (`org.omnione.did.common.util.lss`)
+
+### Function Introduction
+LSS(Ledger Service Server)용 HTTP 클라이언트입니다. `LssConfig`에 API Key가 있으면 모든 요청에 `X-API-Key` 헤더로 넣습니다. 호출에 실패하면 `LssException`을 던집니다.
+
+| 메서드 | LSS API | 설명 |
+| ------ | ------- | ---- |
+| `LssClient(LssConfig config)` | - | `LssConfig(baseUrl, apiKey, timeout)`. 기본 timeout은 30000 ms |
+| `void registerDid(Object requestBody)` | `POST /did-doc` | DID Document 등록 |
+| `void updateDid(Object requestBody)` | `PUT /did-doc` | DID Document 상태 변경 |
+| `String getDid(String did)` | `GET /did-doc?did=` | DID Document(JSON) 조회 |
+| `void registerVcMeta(Object vcMeta)` | `POST /vc-meta` | VC 메타데이터 등록 |
+| `void updateVcMetaStatus(Object requestBody)` | `PATCH /vc-meta` | VC 상태 변경 |
+| `String getVcMetaData(String vcId)` | `GET /vc-meta?vcId=` | VC 메타데이터(JSON) 조회 |
+| `void registerVcSchema(Object requestBody)` | `POST /vc-schema` | VC 스키마 등록 |
+| `String getVcSchema(String vcSchemaId)` | `GET /vc-schema?schemaId=` | VC 스키마(JSON) 조회 |
+
+`LssException`은 `getStatusCode()`, `isClientError()`(4xx), `isServerError()`(5xx), `isAuthenticationError()`(401), `isCommunicationError()`를 제공합니다.
+
+### Function Usage
+```java
+LssClient client = new LssClient(new LssConfig("http://127.0.0.1:8098/lss/api/v1", "your_lss_api_key"));
+String didDoc = client.getDid("did:omn:issuer");
+```
+
+
 # 2. APIs - Domains
 
 
@@ -3221,6 +3279,31 @@ byte[] sign(String keyId, byte[] data) throws CommonSdkException
 byte[] signature = walletService.sign("key-1", dataBytes);
 ```
 <br>
+
+## 3.6 Base Service Implementations
+
+3.1~3.5 서비스의 추상 구현체입니다. 서버는 클래스를 상속하고 아래의 저장·키 조회 메서드만 구현하면 되며, 프로토콜 처리 단계는 이미 구현되어 있습니다.
+
+| 클래스 | 구현 인터페이스 | 구현할 메서드 |
+| ------ | --------------- | ------------- |
+| `BaseEcdhServiceImpl` | `EcdhService` | `getClientPublicKey(String clientDid)`, `generateServerNonce()`, `saveEcdhSession(String clientDid, String sessionKey, String mergedNonce)` |
+| `BaseSignatureServiceImpl` | `SignatureService` | `signData(byte[] data, ProofPurpose proofPurpose)`, `getCurrentUTCTime()` |
+| `BaseTokenServiceImpl` | `TokenService` | `getWalletManager()`, `getSigningKeyId()`, `getPublicKey()`, `saveToken(String token, TokenData tokenData)`, `checkTokenRevocation(String token)` |
+| `BaseVcServiceImpl` | `VcService` | `createVcManager(...)`, `signVerifiableCredential(...)`, `saveVerifiableCredential(...)`, `checkRevocationStatus(String vcId)` |
+| `BaseWalletServiceImpl` | `WalletService` | `initializeDefaultKeys()` |
+
+### Function Usage
+```java
+@Service
+public class EcdhServiceImpl extends BaseEcdhServiceImpl {
+    @Override
+    protected String getClientPublicKey(String clientDid) { /* 클라이언트의 keyAgreement 키 조회 */ }
+    @Override
+    protected byte[] generateServerNonce() { /* 새 nonce 반환 */ }
+    @Override
+    protected void saveEcdhSession(String clientDid, String sessionKey, String mergedNonce) { /* 세션 저장 */ }
+}
+```
 
 
 # 4. APIs - Data Models

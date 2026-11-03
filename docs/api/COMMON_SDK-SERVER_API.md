@@ -19,12 +19,13 @@ puppeteer:
 
 - Topic: Server Common SDK API
 - Author: OmniOne
-- Date: 2024-09-02
-- Version: v1.0.0
+- Date: 2026-11-03
+- Version: v3.0.0
 
 | Version | Date       | Changes                 |
 | ------- | ---------- | ----------------------- |
 | v1.0.0  | 2024-09-02 | Initial Draft           |
+| v3.0.0  | 2026-11-03 | Added ObjectUtil, OtpGenerator, LssClient, and base service implementations |
 
 
 <div style="page-break-after: always;"></div>
@@ -51,6 +52,9 @@ puppeteer:
     - [1.18 BaseCoreDidUtil](#118-basecoredidutil)
     - [1.19 BaseAccessTokenUtil](#119-baseaccesstokenutil)
     - [1.20 BaseWalletUtil](#120-basewalletutil)
+    - [1.21 ObjectUtil](#121-objectutil)
+    - [1.22 OtpGenerator](#122-otpgenerator)
+    - [1.23 LssClient](#123-lssclient)
 - [2. APIs - Domains](#2-apis---domains)
     - [2.1 DidDocCryptoHelper](#21-diddoccryptohelper)
     - [2.2 EcdhCryptoHelper](#22-ecdhcryptohelper)
@@ -61,6 +65,7 @@ puppeteer:
     - [3.3 TokenService](#33-tokenservice)
     - [3.4 VcService](#34-vcservice)
     - [3.5 WalletService](#35-walletservice)
+    - [3.6 Base Service Implementations](#36-base-service-implementations)
 - [4. Data Models](#4-data-models)
 - [5. Enumerator](#5-enumerator)
 - [6. APIs - Exceptions](#6-apis---exceptions)
@@ -2345,6 +2350,58 @@ byte[] sig = BaseWalletUtil.sign(wallet, "key-1", dataBytes);
 ```
 <br>
 
+## 1.21 ObjectUtil
+
+### Class Name
+`ObjectUtil`
+
+| Method | Description |
+| ------ | ----------- |
+| `static boolean equals(Object a, Object b)` | Null-safe equality check |
+| `static boolean equalsIgnoreCase(String a, String b)` | Null-safe case-insensitive comparison |
+| `static int compareVersion(String v1, String v2)` | Compares dotted version strings. Returns a negative number, 0, or a positive number |
+| `static boolean containsInJsonArray(String jsonArrayString, String targetValue)` | Checks whether a JSON array string contains the value |
+
+## 1.22 OtpGenerator
+
+### Class Name
+`OtpGenerator`
+
+| Method | Description |
+| ------ | ----------- |
+| `static String generateOtp()` | Generates a numeric OTP of the default length |
+| `static String generateOtp(int length)` | Generates a numeric OTP of the given length |
+| `static boolean isValidOtpFormat(String otp)` | Checks that the OTP is numeric and has the default length |
+| `static boolean isValidOtpFormat(String otp, int length)` | Checks that the OTP is numeric and has the given length |
+
+## 1.23 LssClient
+
+### Class Name
+`LssClient` (`org.omnione.did.common.util.lss`)
+
+### Function Introduction
+HTTP client for the LSS (Ledger Service Server). When `LssConfig` has an API key, every request carries it in the `X-API-Key` header. A failed call throws `LssException`.
+
+| Method | LSS API | Description |
+| ------ | ------- | ----------- |
+| `LssClient(LssConfig config)` | - | `LssConfig(baseUrl, apiKey, timeout)`. The default timeout is 30000 ms |
+| `void registerDid(Object requestBody)` | `POST /did-doc` | Registers a DID Document |
+| `void updateDid(Object requestBody)` | `PUT /did-doc` | Updates the DID Document status |
+| `String getDid(String did)` | `GET /did-doc?did=` | Returns the DID Document (JSON) |
+| `void registerVcMeta(Object vcMeta)` | `POST /vc-meta` | Registers VC metadata |
+| `void updateVcMetaStatus(Object requestBody)` | `PATCH /vc-meta` | Updates the VC status |
+| `String getVcMetaData(String vcId)` | `GET /vc-meta?vcId=` | Returns VC metadata (JSON) |
+| `void registerVcSchema(Object requestBody)` | `POST /vc-schema` | Registers a VC schema |
+| `String getVcSchema(String vcSchemaId)` | `GET /vc-schema?schemaId=` | Returns the VC schema (JSON) |
+
+`LssException` provides `getStatusCode()`, `isClientError()` (4xx), `isServerError()` (5xx), `isAuthenticationError()` (401), and `isCommunicationError()`.
+
+### Function Usage
+```java
+LssClient client = new LssClient(new LssConfig("http://127.0.0.1:8098/lss/api/v1", "your_lss_api_key"));
+String didDoc = client.getDid("did:omn:issuer");
+```
+
 
 # 2. APIs - Domains
 
@@ -3220,6 +3277,31 @@ byte[] sign(String keyId, byte[] data) throws CommonSdkException
 byte[] signature = walletService.sign("key-1", dataBytes);
 ```
 <br>
+
+## 3.6 Base Service Implementations
+
+Abstract implementations of the services in 3.1–3.5. A server extends a class and implements only the storage and key access methods below; the protocol steps are already implemented.
+
+| Class | Implements | Methods to implement |
+| ----- | ---------- | -------------------- |
+| `BaseEcdhServiceImpl` | `EcdhService` | `getClientPublicKey(String clientDid)`, `generateServerNonce()`, `saveEcdhSession(String clientDid, String sessionKey, String mergedNonce)` |
+| `BaseSignatureServiceImpl` | `SignatureService` | `signData(byte[] data, ProofPurpose proofPurpose)`, `getCurrentUTCTime()` |
+| `BaseTokenServiceImpl` | `TokenService` | `getWalletManager()`, `getSigningKeyId()`, `getPublicKey()`, `saveToken(String token, TokenData tokenData)`, `checkTokenRevocation(String token)` |
+| `BaseVcServiceImpl` | `VcService` | `createVcManager(...)`, `signVerifiableCredential(...)`, `saveVerifiableCredential(...)`, `checkRevocationStatus(String vcId)` |
+| `BaseWalletServiceImpl` | `WalletService` | `initializeDefaultKeys()` |
+
+### Function Usage
+```java
+@Service
+public class EcdhServiceImpl extends BaseEcdhServiceImpl {
+    @Override
+    protected String getClientPublicKey(String clientDid) { /* read the client's keyAgreement key */ }
+    @Override
+    protected byte[] generateServerNonce() { /* return a new nonce */ }
+    @Override
+    protected void saveEcdhSession(String clientDid, String sessionKey, String mergedNonce) { /* store the session */ }
+}
+```
 
 
 # 5. APIs - Data Models
