@@ -12,6 +12,9 @@
 ### 🔧 Changes
 - The artifact is `did-common-sdk-server-3.0.0.jar` (previously `did-sdk-common`)
 
+### 🐛 Bug Fixes
+- `DidUtil.extractVersion` reads the `versionId` query parameter of a DID URL
+
 ## v1.0.0 (2024-10-18)
 
 ### 🚀 New Features

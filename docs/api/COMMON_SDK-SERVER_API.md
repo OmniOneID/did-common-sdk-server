@@ -522,7 +522,7 @@ static String extractDid(String didKeyUrl)
 
 ### Function Usage
 ```java
-String did = DidUtil.extractDid("did:example:1234?version=1");
+String did = DidUtil.extractDid("did:example:1234?versionId=1");
 ```
 <br>
 
