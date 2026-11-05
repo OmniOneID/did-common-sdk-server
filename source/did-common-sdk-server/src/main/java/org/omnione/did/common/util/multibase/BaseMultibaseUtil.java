@@ -77,14 +77,14 @@ public class BaseMultibaseUtil {
             byte[] decoded = MultiBaseUtils.decode(encoded);
             if (decoded == null) {
                 throw new CommonSdkException(
-                        ErrorCode.ENCODING_FAILED,
+                        ErrorCode.DECODING_FAILED,
                         "Failed to decode Multibase: unsupported or invalid encoding");
             }
             return decoded;
         } catch (CommonSdkException e) {
             throw e;
         } catch (Exception e) {
-            throw new CommonSdkException(ErrorCode.ENCODING_FAILED, "Failed to decode Multibase: " + e.getMessage());
+            throw new CommonSdkException(ErrorCode.DECODING_FAILED, "Failed to decode Multibase: " + e.getMessage());
         }
     }
 
@@ -114,7 +114,7 @@ public class BaseMultibaseUtil {
         try {
             return Base64.getDecoder().decode(encoded);
         } catch (Exception e) {
-            throw new CommonSdkException(ErrorCode.ENCODING_FAILED, "Failed to decode Base64: " + e.getMessage());
+            throw new CommonSdkException(ErrorCode.DECODING_FAILED, "Failed to decode Base64: " + e.getMessage());
         }
     }
 }

@@ -40,6 +40,10 @@ public enum ErrorCode {
     INVALID_SYMMETRIC_CIPHER_TYPE("00422", "Invalid symmetric cipher type", 400),
     INVALID_SYMMETRIC_PADDING_TYPE("00423", "Invalid symmetric padding type", 400),
     NONCE_MERGE_FAILED("00424", "Failed to merge nonce", 500),
+    ENCRYPTION_FAILED("00425", "Failed to encrypt data", 500),
+    DECRYPTION_FAILED("00426", "Failed to decrypt data", 500),
+    NONCE_GENERATION_FAILED("00427", "Failed to generate nonce", 500),
+    HASH_GENERATION_FAILED("00428", "Failed to generate hash", 500),
 
     // DID Document (500-599)
     INVALID_DID_DOCUMENT("00501", "Invalid DID document", 400),
@@ -95,6 +99,7 @@ public enum ErrorCode {
     NOT_IMPLEMENTED("01004", "Not implemented", 501),
     NOT_SUPPORTED_OPERATION("01005", "Operation not supported", 400),
     QR_IMAGE_CONVERT_FAILED("01006", "Failed to convert QR image", 500),
+    DECODING_FAILED("01007", "Decoding failed", 500),
     UNKNOWN_ERROR("01099", "Unknown error", 500),
     ;
 

@@ -365,7 +365,7 @@ public class BaseAccessTokenUtil {
 
         // 1. Check if token has expired
         if (currentTime >= exp) {
-            throw new CommonSdkException(ErrorCode.INVALID_ACCESS_TOKEN);
+            throw new CommonSdkException(ErrorCode.EXPIRED_TOKEN);
         }
 
         // 2. Check if token was issued in the future (with clock skew tolerance)

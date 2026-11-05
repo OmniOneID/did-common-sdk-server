@@ -45,4 +45,8 @@ public class CommonSdkException extends RuntimeException {
     public ErrorCode getErrorCode() {
         return errorCode;
     }
+
+    public ErrorResponse getErrorResponse() {
+        return errorResponse;
+    }
 }

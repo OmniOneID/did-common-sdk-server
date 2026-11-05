@@ -80,7 +80,7 @@ public class BaseCoreDidUtil {
         try {
             VerificationMethod method = didManager.getVerificationMethodByKeyId(keyId);
             if (method == null) {
-                throw new CommonSdkException(ErrorCode.DID_DOCUMENT_VERIFICATION_FAILED,
+                throw new CommonSdkException(ErrorCode.DID_DOC_VERIFICATION_METHOD_NOT_FOUND,
                         "Verification method not found for keyId: " + keyId);
             }
             return method;
@@ -111,7 +111,7 @@ public class BaseCoreDidUtil {
                     }
                 }
             }
-            throw new CommonSdkException(ErrorCode.DID_DOCUMENT_VERIFICATION_FAILED,
+            throw new CommonSdkException(ErrorCode.DID_DOC_VERIFICATION_METHOD_NOT_FOUND,
                     "Verification method not found for keyId: " + keyId);
         } catch (CommonSdkException e) {
             throw e;
@@ -137,6 +137,8 @@ public class BaseCoreDidUtil {
             }
             throw new CommonSdkException(ErrorCode.DID_DOCUMENT_VERIFICATION_FAILED,
                     "Public key not found in verification method.");
+        } catch (CommonSdkException e) {
+            throw e;
         } catch (Exception e) {
             throw new CommonSdkException(ErrorCode.DID_DOCUMENT_VERIFICATION_FAILED,
                     "Failed to get public key: " + e.getMessage());

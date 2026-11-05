@@ -18,13 +18,13 @@ puppeteer:
 Common Util SDK Error
 ==
 
-- Date: 2026-11-03
+- Date: 2026-11-05
 - Version: v3.0.0
 
 | Version | Date       | History                 |
 | ------- | ---------- | ------------------------|
 | v1.0.0  | 2024-09-02 | Initial                 |
-| v3.0.0  | 2026-11-03 | Added nonce and wallet error codes |
+| v3.0.0  | 2026-11-05 | Added nonce, wallet, encryption, decryption, hash and decoding error codes |
 
 <div style="page-break-after: always;"></div>
 
@@ -129,6 +129,10 @@ public class ErrorResponse {
 | SSDKUTL00422 | Invalid symmetric cipher type       | -           | Use a valid symmetric cipher type (e.g., AES). |
 | SSDKUTL00423 | Invalid symmetric padding type      | -           | Use a valid padding type. |
 | SSDKUTL00424 | Failed to merge nonce | - | Check the nonces used for the session key. |
+| SSDKUTL00425 | Failed to encrypt data | - | Check the key, IV, cipher and padding. |
+| SSDKUTL00426 | Failed to decrypt data | - | Check the key, IV, cipher, padding and cipher text. |
+| SSDKUTL00427 | Failed to generate nonce | - | Check the requested nonce length. |
+| SSDKUTL00428 | Failed to generate hash | - | Check the input data and digest type. |
 
 ### 1-7. DID Document (00500 ~ 00599)
 
@@ -202,4 +206,5 @@ public class ErrorResponse {
 | SSDKUTL01004 | Not implemented              | -           | Feature not implemented yet. |
 | SSDKUTL01005 | Operation not supported      | -           | This operation is not supported. |
 | SSDKUTL01006 | Failed to convert QR image   | -           | Check QR image data. |
+| SSDKUTL01007 | Decoding failed              | -           | Check data to be decoded. |
 | SSDKUTL01099 | Unknown error                | -           | Unexpected error occurred. Check logs for details. |

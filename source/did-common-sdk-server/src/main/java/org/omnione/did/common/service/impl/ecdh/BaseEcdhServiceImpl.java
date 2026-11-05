@@ -11,6 +11,7 @@ import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.common.domain.ecdh.EcdhCryptoHelper;
 import org.omnione.did.common.domain.signature.SignatureCryptoHelper;
 import org.omnione.did.common.service.ecdh.EcdhService;
+import org.omnione.did.common.util.DidValidator;
 import org.omnione.did.common.util.crypto.BaseCryptoUtil;
 import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.crypto.keypair.KeyPairInterface;
@@ -25,6 +26,8 @@ import java.security.Key;
  * Definition based on SoT 6.2.1.
  */
 public abstract class BaseEcdhServiceImpl implements EcdhService {
+
+    private static final int CLIENT_NONCE_LENGTH = 16;
 
     // Common Implementation
     @Override
@@ -50,6 +53,7 @@ public abstract class BaseEcdhServiceImpl implements EcdhService {
 
         byte[] serverNonce = generateServerNonce();
         byte[] clientNonce = BaseMultibaseUtil.decode(ecdhReqData.getClientNonce());
+        validateClientNonce(clientNonce);
         byte[] mergedNonce = mergeNonce(clientNonce, serverNonce);
 
         byte[] sessionKey = generateSessionKey(ecdhReqData, serverPrivateKey, mergedNonce, serverCipherType);
@@ -136,8 +140,14 @@ public abstract class BaseEcdhServiceImpl implements EcdhService {
 
     // [Estimated] To support common validation
     protected void validateClientDid(String clientDid) throws CommonSdkException {
-        if (clientDid == null || clientDid.isEmpty()) {
+        if (clientDid == null || clientDid.isEmpty() || !DidValidator.isValidDid(clientDid)) {
             throw new CommonSdkException(ErrorCode.INVALID_DID_DOCUMENT);
+        }
+    }
+
+    protected void validateClientNonce(byte[] clientNonce) throws CommonSdkException {
+        if (clientNonce == null || clientNonce.length != CLIENT_NONCE_LENGTH) {
+            throw new CommonSdkException(ErrorCode.INVALID_CLIENT_NONCE);
         }
     }
 
@@ -179,7 +189,7 @@ public abstract class BaseEcdhServiceImpl implements EcdhService {
             outputStream.write(serverNonce);
             return outputStream.toByteArray();
         } catch (IOException e) {
-            throw new CommonSdkException(ErrorCode.JSON_PROCESSING_ERROR); // Generic error for IO
+            throw new CommonSdkException(ErrorCode.NONCE_MERGE_FAILED);
         }
     }
 

@@ -266,6 +266,8 @@ public class BaseCoreVcUtil {
 
             vcManager.addProof(vc, signatureParamsList);
             return vc;
+        } catch (CommonSdkException e) {
+            throw e;
         } catch (CoreException e) {
             throw new CommonSdkException(ErrorCode.VC_SIGNING_FAILED,
                     "Failed to sign Verifiable Credential: " + e.getMessage());

@@ -72,7 +72,7 @@ public class BaseCryptoUtil {
         try {
             return CryptoUtils.generateNonce(length);
         } catch (CryptoException e) {
-            throw new CommonSdkException(ErrorCode.JSON_PROCESSING_ERROR, "Failed to generate nonce: " + e.getMessage());
+            throw new CommonSdkException(ErrorCode.NONCE_GENERATION_FAILED, "Failed to generate nonce: " + e.getMessage());
         }
     }
 
@@ -203,7 +203,7 @@ public class BaseCryptoUtil {
                     toOmnioneSymmetricPaddingType(paddingType));
             return CryptoUtils.encrypt(plainText, cipherInfo, key, iv);
         } catch (CryptoException e) {
-            throw new CommonSdkException(ErrorCode.ENCODING_FAILED);
+            throw new CommonSdkException(ErrorCode.ENCRYPTION_FAILED);
         }
     }
 
@@ -225,7 +225,7 @@ public class BaseCryptoUtil {
                     toOmnioneSymmetricPaddingType(paddingType));
             return CryptoUtils.decrypt(cipherText, cipherInfo, key, iv);
         } catch (CryptoException e) {
-            throw new CommonSdkException(ErrorCode.ENCODING_FAILED);
+            throw new CommonSdkException(ErrorCode.DECRYPTION_FAILED);
         }
     }
 
@@ -279,14 +279,17 @@ public class BaseCryptoUtil {
         try {
             byte[] cipherBytes = MultiBaseUtils.decode(encodedCipherText);
             return decrypt(cipherBytes, key, iv, cipherType, paddingType);
-        } catch (CryptoException e) {
-            throw new CommonSdkException(ErrorCode.ENCODING_FAILED, "Failed to decode cipher text: " + e.getMessage());
+        } catch (CryptoException | IllegalArgumentException e) {
+            throw new CommonSdkException(ErrorCode.DECODING_FAILED, "Failed to decode cipher text: " + e.getMessage());
         }
     }
 
     // Private helper methods for Enum conversion
 
     private static org.omnione.did.crypto.enums.EccCurveType toOmnioneEccCurveType(EccCurveType type) {
+        if (type == null) {
+            throw new CommonSdkException(ErrorCode.INVALID_ECC_CURVE_TYPE, "ECC curve type is required");
+        }
         switch (type) {
             case SECP256K1:
                 return org.omnione.did.crypto.enums.EccCurveType.Secp256k1;
@@ -299,6 +302,9 @@ public class BaseCryptoUtil {
     }
 
     private static DidKeyType toOmnioneDidKeyType(EccCurveType type) {
+        if (type == null) {
+            throw new CommonSdkException(ErrorCode.INVALID_ECC_CURVE_TYPE, "ECC curve type is required");
+        }
         switch (type) {
             case SECP256K1:
                 return DidKeyType.SECP256K1_VERIFICATION_KEY_2018;
@@ -312,6 +318,9 @@ public class BaseCryptoUtil {
 
     private static org.omnione.did.crypto.enums.SymmetricCipherType toOmnioneSymmetricCipherType(
             SymmetricCipherType type) {
+        if (type == null) {
+            throw new CommonSdkException(ErrorCode.INVALID_SYMMETRIC_CIPHER_TYPE, "Symmetric cipher type is required");
+        }
         switch (type) {
             case AES_128_CBC:
                 return org.omnione.did.crypto.enums.SymmetricCipherType.AES_128_CBC;
@@ -329,6 +338,9 @@ public class BaseCryptoUtil {
 
     private static org.omnione.did.crypto.enums.SymmetricPaddingType toOmnioneSymmetricPaddingType(
             SymmetricPaddingType type) {
+        if (type == null) {
+            throw new CommonSdkException(ErrorCode.INVALID_SYMMETRIC_PADDING_TYPE, "Symmetric padding type is required");
+        }
         switch (type) {
             case NOPAD:
                 return org.omnione.did.crypto.enums.SymmetricPaddingType.NOPAD;

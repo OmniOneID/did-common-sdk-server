@@ -28,7 +28,7 @@ public class BaseDigestUtil {
      */
     public static byte[] generateHash(String message) throws CommonSdkException {
         if (message == null) {
-            throw new CommonSdkException(ErrorCode.JSON_PROCESSING_ERROR, "Message cannot be null");
+            throw new CommonSdkException(ErrorCode.HASH_GENERATION_FAILED, "Message cannot be null");
         }
         return generateHash(message.getBytes(StandardCharsets.UTF_8));
     }
@@ -45,7 +45,7 @@ public class BaseDigestUtil {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             return digest.digest(data);
         } catch (NoSuchAlgorithmException e) {
-            throw new CommonSdkException(ErrorCode.JSON_PROCESSING_ERROR, "SHA-256 algorithm not found");
+            throw new CommonSdkException(ErrorCode.HASH_GENERATION_FAILED, "SHA-256 algorithm not found");
         }
     }
 
@@ -58,7 +58,7 @@ public class BaseDigestUtil {
      */
     public static byte[] generateHash512(String message) throws CommonSdkException {
         if (message == null) {
-            throw new CommonSdkException(ErrorCode.JSON_PROCESSING_ERROR, "Message cannot be null");
+            throw new CommonSdkException(ErrorCode.HASH_GENERATION_FAILED, "Message cannot be null");
         }
         return generateHash512(message.getBytes(StandardCharsets.UTF_8));
     }
@@ -75,7 +75,7 @@ public class BaseDigestUtil {
             MessageDigest digest = MessageDigest.getInstance("SHA-512");
             return digest.digest(data);
         } catch (NoSuchAlgorithmException e) {
-            throw new CommonSdkException(ErrorCode.JSON_PROCESSING_ERROR, "SHA-512 algorithm not found");
+            throw new CommonSdkException(ErrorCode.HASH_GENERATION_FAILED, "SHA-512 algorithm not found");
         }
     }
 
@@ -92,7 +92,7 @@ public class BaseDigestUtil {
         try {
             return DigestUtils.getDigest(data, digestType);
         } catch (CryptoException e) {
-            throw new CommonSdkException(ErrorCode.JSON_PROCESSING_ERROR, "Failed to generate hash: " + e.getMessage());
+            throw new CommonSdkException(ErrorCode.HASH_GENERATION_FAILED, "Failed to generate hash: " + e.getMessage());
         }
     }
 
